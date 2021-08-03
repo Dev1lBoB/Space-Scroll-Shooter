@@ -1227,7 +1227,7 @@ namespace Spice_Scroll_Shooter
         public MainWindow()
         {
             InitializeComponent();
-            Player = new Player(15, 2000, MyCanvas);
+            Player = new Player(15, 200, MyCanvas);
             CreateLevels();
             GameTimer.Interval = TimeSpan.FromMilliseconds(20);
             GameTimer.Tick += GameLoop;
