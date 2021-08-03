@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Spice_Scroll_Shooter"
         mc:Ignorable="d"
-        Title="Spice Scroll Shooter" Height="715" Width="540">
+        Title="Spice Scroll Shooter" Height="715" Width="540" ResizeMode="NoResize">
     <Canvas x:Name="MyCanvas" Focusable="True" Background="Black" KeyDown="KeyIsDown" KeyUp="KeyIsUp">
 
         <Button x:Name="StartGame"

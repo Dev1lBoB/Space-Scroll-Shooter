@@ -1,0 +1,16 @@
+C:\Users\79131\source\repos\Spice Scroll Shooter\bin\Debug\Spice Scroll Shooter.exe.config
+C:\Users\79131\source\repos\Spice Scroll Shooter\bin\Debug\Spice Scroll Shooter.exe
+C:\Users\79131\source\repos\Spice Scroll Shooter\bin\Debug\Spice Scroll Shooter.pdb
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter.csproj.AssemblyReference.cache
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\MainWindow.g.cs
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\App.g.cs
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter_MarkupCompile.cache
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter_MarkupCompile.lref
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\MainWindow.baml
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter.g.resources
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice_Scroll_Shooter.Properties.Resources.resources
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter.csproj.GenerateResource.cache
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter.csproj.CoreCompileInputs.cache
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter.exe
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter.pdb
+C:\Users\79131\source\repos\Spice Scroll Shooter\obj\Debug\Spice Scroll Shooter_Content.g.cs

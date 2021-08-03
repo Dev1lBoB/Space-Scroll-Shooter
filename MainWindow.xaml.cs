@@ -15,7 +15,7 @@ namespace Spice_Scroll_Shooter
     public delegate void Attack();
     public class Player
     {
-        public Canvas MyCanvas { get; set; }
+        public static Canvas MyCanvas { get; set; }
         public int Speed { get; set; }
         public Label HealthText { get; set; } = new Label
         {
@@ -458,7 +458,7 @@ namespace Spice_Scroll_Shooter
         {
             if (IsActive == false)
             {
-                Boss.MyCanvas.Children.Add(ExplosionModel);
+                Player.MyCanvas.Children.Add(ExplosionModel);
                 IsActive = true;
             }
             foreach (AEnemy x in AObject.Objects.Where(en => en is AEnemy))
@@ -1227,7 +1227,7 @@ namespace Spice_Scroll_Shooter
         public MainWindow()
         {
             InitializeComponent();
-            Player = new Player(15, 200, MyCanvas);
+            Player = new Player(15, 2000, MyCanvas);
             CreateLevels();
             GameTimer.Interval = TimeSpan.FromMilliseconds(20);
             GameTimer.Tick += GameLoop;
