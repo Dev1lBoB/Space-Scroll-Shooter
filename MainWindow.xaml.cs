@@ -1267,7 +1267,7 @@ namespace Spice_Scroll_Shooter
 
         private void CreateLevels() // Adding new levels to the game
         {
-            Levels.Add(new Level("Level 1", 30, 50));
+            Levels.Add(new Level("Level 1", 3, 50));
             Levels.Add(new Level("Level 2", 10, 15));
             Levels.Add(new Level("Level 3", 30, 40));
             Levels.Add(new BossLevel("Gurlow", CreateBoss("Gurlow")));
@@ -1280,7 +1280,100 @@ namespace Spice_Scroll_Shooter
             Levels.Add(new Level("Level 9", 20, 5));
             Levels.Add(new BossLevel("Drake", CreateBoss("Drake")));
         }
-
+        
+        private void GurlowAttackEvents()
+        {
+            if (Gurlow.IsAttack != null)
+            {
+                Gurlow.TimeOfAttack++;
+                if (Gurlow.IsAttack == "GurlowLaserAttack") // Removes GurlowLasers at the end of attack
+                {
+                    if (Gurlow.TimeOfAttack == Gurlow.MaxTimeOfAttack)
+                    {
+                        foreach (var x in AObject.Objects.Where(obj => obj is GurlowLaser))
+                        {
+                            x.ToRemove = true;
+                        }
+                        Gurlow.IsAttack = null;
+                        Gurlow.TimeOfAttack = 0;
+                    }
+                } // Removes GurlowLasers at the end of attack
+            }
+        }
+        private void QuarrosAttackEvents(Quarros quarros)
+        {
+            if (quarros.Hp <= 75 && quarros.IsSheildActive == false) // Activates QUarros sheild when his HP reaches 75
+            {
+                quarros.Attacks.RemoveAt(1);
+                quarros.IsSheildActive = true;
+                quarros.SheildHp = 75;
+                quarros.HorizontalSpeed = quarros.InSheildHorizontalSpeed * Math.Sign(quarros.HorizontalSpeed);
+                quarros.AttackSpeed = quarros.IntSheildAttackSpeed;
+                Canvas.SetLeft(quarros.SheildModel, Canvas.GetLeft(quarros.Model));
+                Canvas.SetTop(quarros.SheildModel, Canvas.GetTop(quarros.Model));
+                MyCanvas.Children.Add(quarros.SheildModel);
+            } // Activates QUarros sheild when his HP reaches 75
+            if (Quarros.IsAttack == "QuarrosBeamAttack") // Uses QuarrosBeamAttack two more times to make a triple shot
+            {
+                Gurlow.TimeOfAttack++;
+                if (Quarros.TimeOfAttack == 5 || Quarros.TimeOfAttack == 10)
+                {
+                    Quarros.QuarrosAttack2();
+                }
+                if (Quarros.TimeOfAttack == Quarros.MaxTimeOfAttack)
+                {
+                    Quarros.IsAttack = null;
+                    Quarros.TimeOfAttack = 0;
+                }
+            }// Uses QuarrosBeamAttack two more times to make a triple shot
+        }
+        private void DrakeAttackEvents(Drake drake)
+        {
+            if (Drake.IsAttack == "DrakeSphereAttack") // Adds a little lightning animation to DrakeSphereAttack
+            {
+                Drake.TimeOfAttack++;
+                if (Drake.TimeOfAttack == 3 || Drake.TimeOfAttack == 6)
+                {
+                    drake.ScaleTransform.ScaleY *= -1;
+                }
+                else if (Drake.TimeOfAttack == Drake.MaxTimeOfAttack)
+                {
+                    drake.ScaleTransform.ScaleY *= -1;
+                    MyCanvas.Children.Remove(Drake.Lightning1);
+                    MyCanvas.Children.Remove(Drake.Lightning2);
+                    Drake.TimeOfAttack = 0;
+                    Drake.IsAttack = null;
+                }
+            } // Adds a little lightning animation to DrakeSphereAttack
+            else if (Drake.IsAttack == "DrakeLasersAttack") // Uses DrakeLasersAttack three more times to make a quadro shot
+            {
+                Drake.TimeOfAttack++;
+                if (Drake.TimeOfAttack == 5 || Drake.TimeOfAttack == 10)
+                {
+                    Drake.DrakeLasersAttack();
+                }
+                else if (Drake.TimeOfAttack == Drake.MaxTimeOfAttack)
+                {
+                    Drake.DrakeLasersAttack();
+                    Drake.TimeOfAttack = 0;
+                    Drake.IsAttack = null;
+                }
+            }// Uses DrakeLasersAttack three more times to make a quadro shot
+            else if (Drake.IsAttack == "DrakeMissilesAttack") // Uses DrakeMissilesAttack three more times to make a quadro shot
+            {
+                Drake.TimeOfAttack++;
+                if (Drake.TimeOfAttack == 5 || Drake.TimeOfAttack == 10)
+                {
+                    Drake.DrakeMissilesAttack();
+                }
+                else if (Drake.TimeOfAttack == Drake.MaxTimeOfAttack)
+                {
+                    Drake.DrakeMissilesAttack();
+                    Drake.TimeOfAttack = 0;
+                    Drake.IsAttack = null;
+                }
+            }// Uses DrakeMissilesAttack three more times to make a quadro shot
+        }
         private void AttackTimer_Tick(object sender, EventArgs e)// Working with all bosses special attacks
         {
             if (Levels[0] is BossLevel bossLevel)
@@ -1295,102 +1388,310 @@ namespace Spice_Scroll_Shooter
                     } // Uses random boss attack
                     if (bossLevel.Boss is Gurlow gurlow)
                     {
-                        if (Gurlow.IsAttack != null)
-                        {
-                            Gurlow.TimeOfAttack++;
-                            if (Gurlow.IsAttack == "GurlowLaserAttack") // Removes GurlowLasers at the end of attack
-                            {
-                                if (Gurlow.TimeOfAttack == Gurlow.MaxTimeOfAttack)
-                                {
-                                    foreach (var x in AObject.Objects.Where(obj => obj is GurlowLaser))
-                                    {
-                                        x.ToRemove = true;
-                                    }
-                                    Gurlow.IsAttack = null;
-                                    Gurlow.TimeOfAttack = 0;
-                                }
-                            } // Removes GurlowLasers at the end of attack
-                        }
+                        GurlowAttackEvents();
                     }
                     else if (bossLevel.Boss is Quarros quarros)
                     {
-                        if (quarros.Hp <= 75 && quarros.IsSheildActive == false) // Activates QUarros sheild when his HP reaches 75
-                        {
-                            quarros.Attacks.RemoveAt(1);
-                            quarros.IsSheildActive = true;
-                            quarros.SheildHp = 75;
-                            quarros.HorizontalSpeed = quarros.InSheildHorizontalSpeed * Math.Sign(quarros.HorizontalSpeed);
-                            quarros.AttackSpeed = quarros.IntSheildAttackSpeed;
-                            Canvas.SetLeft(quarros.SheildModel, Canvas.GetLeft(quarros.Model));
-                            Canvas.SetTop(quarros.SheildModel, Canvas.GetTop(quarros.Model));
-                            MyCanvas.Children.Add(quarros.SheildModel);
-                        } // Activates QUarros sheild when his HP reaches 75
-                        if (Quarros.IsAttack == "QuarrosBeamAttack") // Uses QuarrosBeamAttack two more times to make a triple shot
-                        {
-                            Gurlow.TimeOfAttack++;
-                            if (Quarros.TimeOfAttack == 5 || Quarros.TimeOfAttack == 10)
-                            {
-                                Quarros.QuarrosAttack2();
-                            }
-                            if (Quarros.TimeOfAttack == Quarros.MaxTimeOfAttack)
-                            {
-                                Quarros.IsAttack = null;
-                                Quarros.TimeOfAttack = 0;
-                            }
-                        }// Uses QuarrosBeamAttack two more times to make a triple shot
+                        QuarrosAttackEvents(quarros);
                     }
                     else if (bossLevel.Boss is Drake drake)
                     {
-                        if (Drake.IsAttack == "DrakeSphereAttack") // Adds a little lightning animation to DrakeSphereAttack
-                        {
-                            Drake.TimeOfAttack++;
-                            if (Drake.TimeOfAttack == 3 || Drake.TimeOfAttack == 6)
-                            {
-                                drake.ScaleTransform.ScaleY *= -1;
-                            }
-                            else if (Drake.TimeOfAttack == Drake.MaxTimeOfAttack)
-                            {
-                                drake.ScaleTransform.ScaleY *= -1;
-                                MyCanvas.Children.Remove(Drake.Lightning1);
-                                MyCanvas.Children.Remove(Drake.Lightning2);
-                                Drake.TimeOfAttack = 0;
-                                Drake.IsAttack = null;
-                            }
-                        } // Adds a little lightning animation to DrakeSphereAttack
-                        else if (Drake.IsAttack == "DrakeLasersAttack") // Uses DrakeLasersAttack three more times to make a quadro shot
-                        {
-                            Drake.TimeOfAttack++;
-                            if (Drake.TimeOfAttack == 5 || Drake.TimeOfAttack == 10)
-                            {
-                                Drake.DrakeLasersAttack();
-                            }
-                            else if (Drake.TimeOfAttack == Drake.MaxTimeOfAttack)
-                            {
-                                Drake.DrakeLasersAttack();
-                                Drake.TimeOfAttack = 0;
-                                Drake.IsAttack = null;
-                            }
-                        }// Uses DrakeLasersAttack three more times to make a quadro shot
-                        else if (Drake.IsAttack == "DrakeMissilesAttack") // Uses DrakeMissilesAttack three more times to make a quadro shot
-                        {
-                            Drake.TimeOfAttack++;
-                            if (Drake.TimeOfAttack == 5 || Drake.TimeOfAttack == 10)
-                            {
-                                Drake.DrakeMissilesAttack();
-                            }
-                            else if (Drake.TimeOfAttack == Drake.MaxTimeOfAttack)
-                            {
-                                Drake.DrakeMissilesAttack();
-                                Drake.TimeOfAttack = 0;
-                                Drake.IsAttack = null;
-                            }
-                        }// Uses DrakeMissilesAttack three more times to make a quadro shot
+                        DrakeAttackEvents(drake);
                     }
                 }
                 catch (Exception) { }
             }
         }
 
+        private void PlayerSheildMoving()
+        {
+            --Player.ShieldTimer;
+            if (!MyCanvas.Children.Contains(Player.ShieldModel))
+            {
+                MyCanvas.Children.Add(Player.ShieldModel);
+            }
+            if (Player.ShieldTimer < 30 && Player.ShieldTimer % 4 == 0) // Makes sheild to blink right before ending
+            {
+                MyCanvas.Children.Remove(Player.ShieldModel);
+            } // Makes sheild to blink right before ending
+            Canvas.SetLeft(Player.ShieldModel, Canvas.GetLeft(Player.Model));
+            Canvas.SetTop(Player.ShieldModel, Canvas.GetTop(Player.Model));
+        }
+        private void BossHBoxMoving(Boss boss)
+        {
+            for (int i = 0; i < boss.HBox.Points.Count(); i++)
+            {
+                boss.HBox.Points[i] = new Point(boss.HBox.Points[i].X + boss.HorizontalSpeed, boss.HBox.Points[i].Y + boss.VerticalSpeed);
+            }
+        }
+        private void ObjectReachesBottom(AObject obj)
+        {
+            if (obj is AEnemy en) // Respawn an enemy at the top and deal some dmg
+            {
+                Canvas.SetTop(en.Model, -100);
+                Player.TakeDamage(en.Damage * 2);
+            } // Respawn an enemy at the top and deal some dmg
+            else
+            {
+                obj.ToRemove = true;
+            }
+        }
+        private void CheckBulletForHit_Boss(ABullet bullet, Boss boss)
+        {
+            int X = (int)Canvas.GetLeft(bullet.Model);
+            int Y = (int)Canvas.GetTop(bullet.Model);
+            for (int i = 0; i < boss.HBox.Points.Count() - 1; i++)
+            {
+                int HBox_X = (int)boss.HBox.Points[i].X;
+                int HBox_X2 = (int)boss.HBox.Points[i + 1].X;
+                int HBox_Y = (int)boss.HBox.Points[i].Y;
+                int HBox_Y2 = (int)boss.HBox.Points[i + 1].Y;
+                if (X <= HBox_X && X >= HBox_X2 && Y < Math.Max(HBox_Y, HBox_Y2))
+                {
+                    double Tg = (double)(HBox_X - X) / (HBox_Y - Y);
+                    double HBox_Tg = (double)(HBox_X - HBox_X2) / (HBox_Y - HBox_Y2);
+                    if (Tg <= HBox_Tg || Y <= Math.Min(HBox_Y, HBox_Y2))
+                    {
+                        boss.TakeDamage(bullet.Damage);
+                        bullet.ToRemove = true;
+                    }
+                }
+            }
+        }
+        private void CheckBulletForHit(ABullet bullet)
+        {
+            foreach (AEnemy y in AObject.Objects.Where(obj => obj is AEnemy))
+            {
+                if (y.IsDead)
+                    continue;
+                if (y is Boss boss)// Hitting Boss with bullet
+                {
+                    CheckBulletForHit_Boss(bullet, boss);
+                }// Hitting Boss with bullet
+                else if (bullet.HitBox.IntersectsWith(y.HitBox))// Hitting regular enemy with bullet
+                {
+                    y.TakeDamage(bullet.Damage);
+                    bullet.ToRemove = true;
+                }// Hitting regular enemy with bullet
+            }
+        }
+        private void PlayerIntersectionWithObjects(AObject obj)
+        {
+            if (obj is AEnemy enem) // With enemy
+            {
+                Player.TakeDamage(enem.Damage);
+                enem.IsDead = true;
+                enem.ToRemove = true;
+            } // With enemy
+            else if (obj is AProjectile projectile) // With projectile
+            {
+                Player.TakeDamage(projectile.Damage);
+                if (projectile.Destructible)
+                {
+                    projectile.Lifetime = 0;
+                    projectile.ToRemove = true;
+                }
+            }// With projectile
+            else if (obj is ABonus bonus) // With bonus
+            {
+                bonus.Effect(Player);
+                bonus.IsTaken = true;
+                bonus.ToRemove = true;
+            } // With bonus
+        }
+        private void WorkWithObjects(AObject obj)
+        {
+            Canvas.SetTop(obj.Model, Canvas.GetTop(obj.Model) + obj.VerticalSpeed);
+            Canvas.SetLeft(obj.Model, Canvas.GetLeft(obj.Model) + obj.HorizontalSpeed);
+            if (obj is Boss enemy) // Moving the boss complex HBox
+            {
+                BossHBoxMoving(enemy);
+            } // Moving the boss complex HBox
+
+            if (Canvas.GetLeft(obj.Model) <= 0 || Canvas.GetLeft(obj.Model) >= Application.Current.MainWindow.Width - obj.Model.Width) // Horizontal ricochet
+            {
+                obj.Angle = -obj.Angle;
+            } // Horizontal ricochet
+
+            if (Canvas.GetTop(obj.Model) > Canvas.GetTop(Player.Model) + 30 || Canvas.GetTop(obj.Model) < -150) // Object passes through thу bottom
+            {
+                ObjectReachesBottom(obj);
+            } // Object passes through thу bottom
+
+            if (obj is HomingMissile missile && Canvas.GetTop(obj.Model) < Canvas.GetTop(Player.Model) - 100) // Make HommingMissiles to aim to the Player model
+            {
+                missile.Angle = Math.Atan((Canvas.GetLeft(obj.Model) - Canvas.GetLeft(Player.Model) - (Player.Model.Width / 2)) / (Canvas.GetTop(obj.Model) - Canvas.GetTop(Player.Model)));
+            }// Make HommingMissiles to aim to the Player model
+            else if (obj is PowerSphere sphere && Canvas.GetTop(obj.Model) > Canvas.GetTop(Player.Model) - 350)// Make PowerSPhere to explode at the middle of the screen
+            {
+                sphere.ToRemove = true;
+            }// Make PowerSPhere to explode at the middle of the screen
+
+            obj.HitBox = new Rect(Canvas.GetLeft(obj.Model), Canvas.GetTop(obj.Model), obj.Model.Width, obj.Model.Height);
+            if (obj is ABullet bullet) // Checking every bullet for hitting an enemy
+            {
+                CheckBulletForHit(bullet);
+            } // Checking every bullet for hitting an enemy
+            if (Player.HBox.IntersectsWith(obj.HitBox)) // Player intersection with objects 
+            {
+                PlayerIntersectionWithObjects(obj);
+            } // Player intersection with objects 
+        }
+        private void MovingGurlowLasers(Gurlow gurlow)
+        {
+            foreach (GurlowLaser x in AObject.Objects.OfType<GurlowLaser>())
+            {
+                try
+                {
+                    Canvas.SetLeft(x.Model, Canvas.GetLeft(AObject.Objects.FirstOrDefault(y => y is Boss).Model) + x.Side + gurlow.Model.Width / 2 - 4);
+                    Canvas.SetTop(x.Model, gurlow.Model.Height);
+                }
+                catch (Exception) { }
+            }
+        }
+        private void MovingQuarrosSheild(Quarros quarros)
+        {
+            if (quarros.IsSheildActive == true && quarros.SheildHp != 0)
+            {
+                Canvas.SetLeft(quarros.SheildModel, Canvas.GetLeft(quarros.Model));
+                Canvas.SetTop(quarros.SheildModel, Canvas.GetTop(quarros.Model));
+            }
+        }
+        private void MovingDrakeLightnings(Drake drake)
+        {
+            Canvas.SetLeft(Drake.Lightning1, drake.HBox.Points[2].X - Drake.Lightning1.Width);
+            Canvas.SetTop(Drake.Lightning1, drake.HBox.Points[2].Y - 10);
+            Canvas.SetLeft(Drake.Lightning2, drake.HBox.Points[12].X);
+            Canvas.SetTop(Drake.Lightning2, drake.HBox.Points[12].Y - 10);
+        }
+        private void MovingBossesSpecialObjects(BossLevel bossLevel)
+        {
+            if (bossLevel.Boss is Gurlow gurlow) // Moving GurlowsLasers
+            {
+                MovingGurlowLasers(gurlow);
+            } // Moving GurlowsLasers
+            else if (bossLevel.Boss is Quarros quarros) // Moving Quarroses sheild
+            {
+                MovingQuarrosSheild(quarros);
+            } // Moving Quarroses sheild
+            else if (bossLevel.Boss is Drake drake) // Moving Drakes lighnings
+            {
+                MovingDrakeLightnings(drake);
+            } // Moving Drakes lighnings
+        }
+        private ABonus CreateRandomBonus()
+        {
+            int ChanceOfBonus = Rand.Next(1, 50);
+            if (ChanceOfBonus < 5)
+            {
+                switch (ChanceOfBonus)
+                {
+                    case 1:
+                        return new RepairBonus();
+                    case 2:
+                        return new ExplosionBonus();
+                    case 3:
+                        return new SheildBonus();
+                    case 4:
+                        return new MoneyBonus();
+                    default:
+                        return new MoneyBonus();
+                }
+            }
+            return null;
+        }
+        private void RemoveEnemie(AEnemy enemy)
+        {
+            Player.Score++;
+            if (enemy is Boss boss) // Stopping boss attacks
+            {
+                boss.AttackTimer.Tick -= AttackTimer_Tick;
+                boss.AttackTimer.Stop();
+                ItemRemover.Add(boss.HealthBar);
+                MyCanvas.Children.Remove(boss.HBox);
+            } // Stopping boss attacks
+            ABonus NewBonus = CreateRandomBonus();
+            if (NewBonus != null) // Spawning bonuses
+            {
+                AObject.Objects.Add(NewBonus);
+                Canvas.SetLeft(NewBonus.Model, Canvas.GetLeft(enemy.Model) + enemy.Model.Width / 2);
+                Canvas.SetTop(NewBonus.Model, Canvas.GetTop(enemy.Model));
+                _ = MyCanvas.Children.Add(NewBonus.Model);
+            } // Spawning bonuses
+        }
+        private void ExplodePowerSphere(PowerSphere sphere)
+        {
+            List<AProjectile> projectiles = new List<AProjectile>
+            {
+                new Fireball(0),
+                new Beam(30),
+                new Beam(-30),
+                new Fireball(60),
+                new Fireball(-60)
+            };
+            foreach (var proj in projectiles)
+            {
+                Canvas.SetLeft(proj.Model, Canvas.GetLeft(sphere.Model) + 20);
+                Canvas.SetTop(proj.Model, Canvas.GetTop(sphere.Model) + 20);
+                AObject.Objects.Add(proj);
+                _ = MyCanvas.Children.Add(proj.Model);
+            }
+        }
+        private void RemoveAllObjects()// Removing of objects
+        {
+            for (int i = AObject.Objects.Count - 1; i >= 0; i--)
+            {
+                if (AObject.Objects[i].ToRemove)
+                {
+                    MyCanvas.Children.Remove(AObject.Objects[i].Model);
+                    if (AObject.Objects[i] is AEnemy enemy) // Deleting enemies
+                    {
+                        RemoveEnemie(enemy);
+                    } // Deleting enemies
+                    else if (AObject.Objects[i] is PowerSphere sphere) // Making PowerSphere to explode into 5 new projectiles
+                    {
+                        ExplodePowerSphere(sphere);
+                    }// Making PowerSphere to explode into 5 new projectiles
+                    AObject.Objects.RemoveAt(i);
+                }
+            }
+        }
+        private void GetToTheNextLvl()
+        {
+            if (Levels.Count == 1) // Finishing the game
+            {
+                _ = MessageBox.Show("Congratz, you destroyed all alien ships and saved the world!", "Chad");
+                Application.Current.Shutdown();
+                Environment.Exit(0);
+            } // Finishing the game
+            if (Levels[0] is BossLevel Level) // Opens SHOP after every bossLevel
+            {
+                for (int i = AObject.Objects.Count() - 1; i >= 0; i--) // Remove excess objects
+                {
+                    MyCanvas.Children.Remove(AObject.Objects[i].Model);
+                    AObject.Objects.RemoveAt(i);
+                } // Remove excess objects
+                GameTimer.Stop();
+                Shop.OpenShop(MyCanvas, Player, GameTimer);
+            } // Opens SHOP after every bossLevel
+            Levels.RemoveAt(0);
+            EnemyCount = 0;
+            EnemySpawnCounter = 100;
+            LevelLabel.Content = Levels[0].LevelName;
+            LevelStart = true;
+        }
+        private void GameOver()
+        {
+            GameTimer.Stop();
+            if (Levels[0] is BossLevel bosslevel)
+            {
+                bosslevel.Boss.AttackTimer.Stop();
+            }
+            Player.HealthText.Foreground = Brushes.Red;
+            MessageBox.Show("Lol you died!" + Environment.NewLine + "So, that was the last hope of mankind, huh?", "Loser");
+            Application.Current.Shutdown();
+            Environment.Exit(0);
+        }
         private void GameLoop(object sender, EventArgs e) // The main loop
         {
             Player.HBox = new Rect(Canvas.GetLeft(Player.Model), Canvas.GetTop(Player.Model), Player.Model.Width, Player.Model.Height);
@@ -1406,8 +1707,7 @@ namespace Spice_Scroll_Shooter
                 Canvas.SetTop(LevelLabel, 300);
                 MyCanvas.Children.Add(LevelLabel);
                 LevelStart = false;
-            }// Shows level name at the screen when the level starts
-
+            } // Shows level name at the screen when the level starts
             if (EnemySpawnCounter < 0 && EnemyCount < Levels[0].NumOfEnemies)// Spawning Enemies
             {
                 if (EnemyCount == 0) // Removes the level name off screen when the first enemy spawnes
@@ -1417,8 +1717,7 @@ namespace Spice_Scroll_Shooter
                 EnemyCount++;
                 MakeEnemies();
                 EnemySpawnCounter = Levels[0].Limit;
-            }// Spawning Enemies
-
+            } // Spawning Enemies
             if (IsMoveLeft && Canvas.GetLeft(Player.Model) > 0) // Moving left
             {
                 Canvas.SetLeft(Player.Model, Canvas.GetLeft(Player.Model) - Player.Speed);
@@ -1429,254 +1728,28 @@ namespace Spice_Scroll_Shooter
             } // Moving right
             if (Player.ShieldTimer != 0) // Working with player sheild after catching the SheildBonus
             {
-                --Player.ShieldTimer;
-                if (!MyCanvas.Children.Contains(Player.ShieldModel))
-                {
-                    MyCanvas.Children.Add(Player.ShieldModel);
-                }
-                if (Player.ShieldTimer < 30 && Player.ShieldTimer % 4 == 0) // Makes sheild to blink right before ending
-                {
-                    MyCanvas.Children.Remove(Player.ShieldModel);
-                } // Makes sheild to blink right before ending
-                Canvas.SetLeft(Player.ShieldModel, Canvas.GetLeft(Player.Model));
-                Canvas.SetTop(Player.ShieldModel, Canvas.GetTop(Player.Model));
-            }// Working with player sheild after catching the SheildBonus
+                PlayerSheildMoving();
+            } // Working with player sheild after catching the SheildBonus
             foreach (AObject x in AObject.Objects) // Working with every Object in the map
             {
-                Canvas.SetTop(x.Model, Canvas.GetTop(x.Model) + x.VerticalSpeed);
-                Canvas.SetLeft(x.Model, Canvas.GetLeft(x.Model) + x.HorizontalSpeed);
-                if (x is Boss enemy) // Moving the boss complex HBox
-                {
-                    for (int i = 0; i < enemy.HBox.Points.Count(); i++)
-                    {
-                        enemy.HBox.Points[i] = new Point(enemy.HBox.Points[i].X + enemy.HorizontalSpeed, enemy.HBox.Points[i].Y + enemy.VerticalSpeed);
-                    }
-                } // Moving the boss complex HBox
-
-                if (Canvas.GetLeft(x.Model) <= 0 || Canvas.GetLeft(x.Model) >= Application.Current.MainWindow.Width - x.Model.Width) // Horizontal ricochet
-                {
-                    x.Angle = -x.Angle;
-                } // Horizontal ricochet
-
-                if (Canvas.GetTop(x.Model) > Canvas.GetTop(Player.Model) + 30 || Canvas.GetTop(x.Model) < -150) // Object passes through thу bottom
-                {
-                    if (x is AEnemy en) // Respawn an enemy at the top and deal some dmg
-                    {
-                        Canvas.SetTop(en.Model, -100);
-                        Player.TakeDamage(en.Damage * 2);
-                    } // Respawn an enemy at the top and deal some dmg
-                    else
-                    {
-                        x.ToRemove = true;
-                    }
-                } // Object passes through thу bottom
-
-                if (x is HomingMissile missile && Canvas.GetTop(x.Model) < Canvas.GetTop(Player.Model) - 100) // Make HommingMissiles to aim to the Player model
-                {
-                    missile.Angle = Math.Atan((Canvas.GetLeft(x.Model) - Canvas.GetLeft(Player.Model) - (Player.Model.Width / 2)) / (Canvas.GetTop(x.Model) - Canvas.GetTop(Player.Model)));
-                }// Make HommingMissiles to aim to the Player model
-                else if (x is PowerSphere sphere && Canvas.GetTop(x.Model) > Canvas.GetTop(Player.Model) - 350)// Make PowerSPhere to explode at the middle of the screen
-                {
-                    sphere.ToRemove = true;
-                }// Make PowerSPhere to explode at the middle of the screen
-
-                x.HitBox = new Rect(Canvas.GetLeft(x.Model), Canvas.GetTop(x.Model), x.Model.Width, x.Model.Height);
-                if (x is ABullet bullet) // Checking every bullet for hitting an enemy
-                {
-                    foreach (AEnemy y in AObject.Objects.Where(obj => obj is AEnemy))
-                    {
-                        if (y.IsDead)
-                            continue;
-                        if (y is Boss boss)// Hitting Boss with bullet
-                        {
-                            int X = (int)Canvas.GetLeft(bullet.Model);
-                            int Y = (int)Canvas.GetTop(bullet.Model);
-                            for (int i = 0; i < boss.HBox.Points.Count() - 1; i++)
-                            {
-                                int HBox_X = (int)boss.HBox.Points[i].X;
-                                int HBox_X2 = (int)boss.HBox.Points[i + 1].X;
-                                int HBox_Y = (int)boss.HBox.Points[i].Y;
-                                int HBox_Y2 = (int)boss.HBox.Points[i + 1].Y;
-                                if (X <= HBox_X && X >= HBox_X2 && Y < Math.Max(HBox_Y, HBox_Y2))
-                                {
-                                    double Tg = (double)(HBox_X - X) / (HBox_Y - Y);
-                                    double HBox_Tg = (double)(HBox_X - HBox_X2) / (HBox_Y - HBox_Y2);
-                                    if (Tg <= HBox_Tg || Y <= Math.Min(HBox_Y, HBox_Y2))
-                                    {
-                                        boss.TakeDamage(bullet.Damage);
-                                        x.ToRemove = true;
-                                    }
-                                }
-                            }
-                        }// Hitting Boss with bullet
-                        else if (bullet.HitBox.IntersectsWith(y.HitBox))// Hitting regular enemy with bullet
-                        {
-                            y.TakeDamage(bullet.Damage);
-                            bullet.ToRemove = true;
-                        }// Hitting regular enemy with bullet
-                    }
-                } // Checking every bullet for hitting an enemy
-                if (Player.HBox.IntersectsWith(x.HitBox)) // Player intersection with objects 
-                {
-                    if (x is AEnemy enem) // With enemy
-                    {
-                        Player.TakeDamage(enem.Damage);
-                        enem.IsDead = true;
-                        enem.ToRemove = true;
-                    } // With enemy
-                    else if (x is AProjectile projectile) // With projectile
-                    {
-                        Player.TakeDamage(projectile.Damage);
-                        if (projectile.Destructible)
-                        {
-                            projectile.Lifetime = 0;
-                            projectile.ToRemove = true;
-                        }
-                    }// With projectile
-                    else if (x is ABonus bonus) // With bonus
-                    {
-                        bonus.Effect(Player);
-                        bonus.IsTaken = true;
-                        bonus.ToRemove = true;
-                    } // With bonus
-                } // Player intersection with objects 
+                WorkWithObjects(x);
             } // Working with every Object in the map
-
-            if (Levels[0] is BossLevel bossLevel)// Enteraction with bosses special objects
+            if (Levels[0] is BossLevel bossLevel)
             {
-                if (bossLevel.Boss is Gurlow gurlow) // Moving GurlowsLasers
-                {
-                    foreach (GurlowLaser x in AObject.Objects.OfType<GurlowLaser>())
-                    {
-                        try
-                        {
-                            Canvas.SetLeft(x.Model, Canvas.GetLeft(AObject.Objects.FirstOrDefault(y => y is Boss).Model) + x.Side + gurlow.Model.Width / 2 - 4);
-                            Canvas.SetTop(x.Model, gurlow.Model.Height);
-                        }
-                        catch (Exception) { }
-                    }
-                } // Moving GurlowsLasers
-                else if (bossLevel.Boss is Quarros quarros) // Moving Quarroses sheild
-                {
-                    if (quarros.IsSheildActive == true && quarros.SheildHp != 0)
-                    {
-                        Canvas.SetLeft(quarros.SheildModel, Canvas.GetLeft(quarros.Model));
-                        Canvas.SetTop(quarros.SheildModel, Canvas.GetTop(quarros.Model));
-                    }
-                } // Moving Quarroses sheild
-                else if (bossLevel.Boss is Drake drake) // Moving Drakes lighnings
-                {
-                    Canvas.SetLeft(Drake.Lightning1, drake.HBox.Points[2].X - Drake.Lightning1.Width);
-                    Canvas.SetTop(Drake.Lightning1, drake.HBox.Points[2].Y - 10);
-                    Canvas.SetLeft(Drake.Lightning2, drake.HBox.Points[12].X);
-                    Canvas.SetTop(Drake.Lightning2, drake.HBox.Points[12].Y - 10);
-                } // Moving Drakes lighnings
+                MovingBossesSpecialObjects(bossLevel);
             }// Enteraction with bosses special objects
-            for (int i = AObject.Objects.Count - 1; i >= 0; i--) // Removing of objects
-            {
-                if (AObject.Objects[i].ToRemove)
-                {
-                    MyCanvas.Children.Remove(AObject.Objects[i].Model);
-                    if (AObject.Objects[i] is AEnemy enemy) // Deleting enemies
-                    {
-                        Player.Score++;
-                        if (enemy is Boss boss) // Stopping boss attacks
-                        {
-                            boss.AttackTimer.Tick -= AttackTimer_Tick;
-                            boss.AttackTimer.Stop();
-                            ItemRemover.Add(boss.HealthBar);
-                            MyCanvas.Children.Remove(boss.HBox);
-                        } // Stopping boss attacks
-                        ABonus NewBonus;
-                        int ChanceOfBonus = Rand.Next(1, 50);
-                        if (ChanceOfBonus < 5) // Spawning bonuses
-                        {
-                            switch (ChanceOfBonus)
-                            {
-                                case 1:
-                                    NewBonus = new RepairBonus();
-                                    break;
-                                case 2:
-                                    NewBonus = new ExplosionBonus();
-                                    break;
-                                case 3:
-                                    NewBonus = new SheildBonus();
-                                    break;
-                                case 4:
-                                    NewBonus = new MoneyBonus();
-                                    break;
-                                default:
-                                    NewBonus = new MoneyBonus();
-                                    break;
-                            }
-                            AObject.Objects.Add(NewBonus);
-                            Canvas.SetLeft(NewBonus.Model, Canvas.GetLeft(enemy.Model) + enemy.Model.Width / 2);
-                            Canvas.SetTop(NewBonus.Model, Canvas.GetTop(enemy.Model));
-                            _ = MyCanvas.Children.Add(NewBonus.Model);
-                        }// Spawning bonuses
-                    } // Deleting enemies
-                    else if (AObject.Objects[i] is PowerSphere sphere) // Making PowerSphere to explode into 5 new projectiles
-                    {
-                        List<AProjectile> projectiles = new List<AProjectile>
-                        {
-                            new Fireball(0),
-                            new Beam(30),
-                            new Beam(-30),
-                            new Fireball(60),
-                            new Fireball(-60)
-                        };
-                        foreach (var proj in projectiles)
-                        {
-                            Canvas.SetLeft(proj.Model, Canvas.GetLeft(sphere.Model) + 20);
-                            Canvas.SetTop(proj.Model, Canvas.GetTop(sphere.Model) + 20);
-                            AObject.Objects.Add(proj);
-                            _ = MyCanvas.Children.Add(proj.Model);
-                        }
-                    }// Making PowerSphere to explode into 5 new projectiles
-                    AObject.Objects.RemoveAt(i);
-                }
-            } // Removing of objects
-
+            RemoveAllObjects();
             foreach (Rectangle item in ItemRemover)// ItemRemover
             {
                 MyCanvas.Children.Remove(item);
-            }// ItemRemover
-
+            } // ItemRemover
             if (EnemyCount == Levels[0].NumOfEnemies && AObject.Objects.Where(obj => obj is AEnemy).Count() == 0) // Getting to the next level
             {
-                if (Levels.Count == 1) // Finishing the game
-                {
-                    _ = MessageBox.Show("Congratz, you destroyed all alien ships and saved the world!", "Chad");
-                    Application.Current.Shutdown();
-                    return;
-                } // Finishing the game
-                if (Levels[0] is BossLevel Level) // Opens SHOP after every bossLevel
-                {
-                    for (int i = AObject.Objects.Count() - 1; i >= 0; i--)
-                    {
-                        MyCanvas.Children.Remove(AObject.Objects[i].Model);
-                        AObject.Objects.RemoveAt(i);
-                    }
-                    GameTimer.Stop();
-                    Shop.OpenShop(MyCanvas, Player, GameTimer);
-                } // Opens SHOP after every bossLevel
-                Levels.RemoveAt(0);
-                EnemyCount = 0;
-                EnemySpawnCounter = 100;
-                LevelLabel.Content = Levels[0].LevelName;
-                LevelStart = true;
+                GetToTheNextLvl();
             } // Getting to the next level
             if (Player.Health <= 0) // Losing the game
             {
-                GameTimer.Stop();
-                if (Levels[0] is BossLevel bosslevel)
-                {
-                    bosslevel.Boss.AttackTimer.Stop();
-                }
-                Player.HealthText.Foreground = Brushes.Red;
-                MessageBox.Show("Lol you died!" + Environment.NewLine + "So, that was the last hope of mankind, huh?", "Loser");
-                Application.Current.Shutdown();
-                return;
+                GameOver();
             } // Losing the game
         }
 
