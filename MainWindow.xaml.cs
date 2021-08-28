@@ -479,7 +479,8 @@ namespace Spice_Scroll_Shooter
                 Application.Current.Shutdown();
                 Environment.Exit(0);
             } // Finishing the game
-            if (Levels[0] is BossLevel Level) // Opens SHOP after every bossLevel
+
+            if (Levels[0] is BossLevel) // Opens SHOP after every bossLevel
             {
                 for (int i = AObject.Objects.Count() - 1; i >= 0; i--) // Remove excess objects
                 {
