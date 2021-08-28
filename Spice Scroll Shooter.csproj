@@ -55,14 +55,46 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Srcs\Player.cs" />
+    <Compile Include="Srcs\AObject.cs" />
+    <Compile Include="Srcs\Bullets\ABullet.cs" />
+    <Compile Include="Srcs\Bullets\Bullet.cs" />
+    <Compile Include="Srcs\Bullets\EnergyBall.cs" />
+    <Compile Include="Srcs\Enemies\Bosses\ABoss.cs" />
+    <Compile Include="Srcs\Enemies\Bosses\Drake.cs" />
+    <Compile Include="Srcs\Enemies\Bosses\Gurlow.cs" />
+    <Compile Include="Srcs\Enemies\Bosses\Quarros.cs" />
+    <Compile Include="Srcs\Weapons\AWeapon.cs" />
+    <Compile Include="Srcs\Bonuses\ExplosionBonus.cs" />
+    <Compile Include="Srcs\Bonuses\MoneyBonus.cs" />
+    <Compile Include="Srcs\Bonuses\RepairBonus.cs" />
+    <Compile Include="Srcs\Bonuses\SheildBonus.cs" />
+    <Compile Include="Srcs\Enemies\DangerousEnemy.cs" />
+    <Compile Include="Srcs\Enemies\FastEnemy.cs" />
+    <Compile Include="Srcs\Enemies\StrafingEnemy.cs" />
+    <Compile Include="Srcs\Enemies\StrongEnemy.cs" />
+    <Compile Include="Srcs\Level.cs" />
+    <Compile Include="Srcs\Projectiles\Beam.cs" />
+    <Compile Include="Srcs\Projectiles\Fireball.cs" />
+    <Compile Include="Srcs\Projectiles\GurlowLaser.cs" />
+    <Compile Include="Srcs\Projectiles\HomingMissile.cs" />
+    <Compile Include="Srcs\Projectiles\MiniLaser.cs" />
+    <Compile Include="Srcs\Projectiles\PowerSphere.cs" />
+    <Compile Include="Srcs\Shop.cs" />
+    <Compile Include="Srcs\Weapons\DefaultGun.cs" />
+    <Compile Include="Srcs\Weapons\EnergyGun.cs" />
+    <Compile Include="Srcs\Weapons\TripleGun.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Srcs\Bonuses\ABonus.cs" />
+    <Compile Include="Srcs\Enemies\AEnemy.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Srcs\Projectiles\AProjectile.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
